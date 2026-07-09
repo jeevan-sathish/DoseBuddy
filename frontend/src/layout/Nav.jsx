@@ -17,8 +17,8 @@ const Nav = () => {
     <nav className="bg-red-600 w-full h-14 flex items-center justify-between px-6 sticky top-0 z-50 text-gray-200">
       <div className="flex flex-row justify-center items-center gap-7">
         <h1 className="text-3xl font-bold ">
-          <span className="text-black">D</span>ose
-          <span className="text-black">B</span>uddy
+          <span className="text-black">C</span>ode
+          <span className="text-black">B</span>oard
         </h1>
 
         <div className="flex items-center gap-5 font-extrabold">

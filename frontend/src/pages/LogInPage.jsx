@@ -17,17 +17,17 @@ const LogInPage = () => {
       <div className="w-full max-w-md rounded-3xl border border-white/10 bg-white/5 backdrop-blur-xl shadow-2xl p-8">
         <div className="flex justify-center mb-5">
           <div className="w-16 h-16 rounded-2xl bg-red-500 flex items-center justify-center shadow-lg">
-            <span className="text-3xl font-extrabold text-white">DB</span>
+            <span className="text-3xl font-extrabold text-white">CB</span>
           </div>
         </div>
 
         <h1 className="text-4xl font-extrabold text-center text-white">
-          <span className="text-black">D</span>ose
-          <span className="text-red-500">B</span>uddy
+          <span className="text-black">C</span>ode
+          <span className="text-red-500">B</span>oard
         </h1>
 
         <p className="text-center text-gray-400 mt-3 text-sm leading-6">
-          Your intelligent medication companion.
+          Embed with intellgence .
           <br />
           Sign in securely with Google to continue.
         </p>

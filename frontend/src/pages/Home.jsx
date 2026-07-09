@@ -10,7 +10,7 @@ const Home = () => {
       <div className="max-w-4xl flex flex-col items-center text-center gap-8">
         <div className="space-y-4">
           <h1 className="text-6xl md:text-8xl font-extrabold tracking-tight">
-            Dose<span className="text-red-500">B</span>uddy
+            Code<span className="text-red-500">B</span>oard
           </h1>
 
           <p className="text-lg md:text-xl text-gray-300 max-w-3xl leading-8">
