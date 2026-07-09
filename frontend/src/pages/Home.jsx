@@ -1,9 +1,10 @@
 import { Link } from "react-router-dom";
-import Login from "../auth/Login";
-import { useEffect, useState } from "react";
+
+import { useSelector } from "react-redux";
 
 const Home = () => {
-  const aT = localStorage.getItem("accessToken");
+  const { isAuthenticated } = useSelector((state) => state.userProfile);
+
   return (
     <section className="min-h-screen bg-[#0f172a] text-white flex items-center justify-center px-6">
       <div className="max-w-4xl flex flex-col items-center text-center gap-8">
@@ -20,16 +21,12 @@ const Home = () => {
         </div>
 
         <div className="flex flex-wrap justify-center gap-4">
-          {aT ? (
-            <Link
-              to="/DiagnosisPage"
-              className="bg-red-500 hover:bg-red-600 transition duration-300 px-8 py-3 rounded-lg font-semibold"
-            >
-              Start Diagnosis
-            </Link>
-          ) : (
-            <Login />
-          )}
+          <Link
+            to={isAuthenticated ? "/DiagnosisPage" : "/LogInPage"}
+            className="bg-red-500 hover:bg-red-600 transition duration-300 px-8 py-3 rounded-lg font-semibold"
+          >
+            Start with
+          </Link>
         </div>
       </div>
     </section>
