@@ -23,11 +23,7 @@ export const getProfile = createAsyncThunk(
     try {
       const token = localStorage.getItem("access_token_db");
       console.log(token);
-      const response = await api.get("/login/profile", {
-        // headers: {
-        //   Authorization: `Bearer ${token}`,
-        // },
-      });
+      const response = await api.get("/login/profile");
 
       return response.data;
     } catch (error) {
