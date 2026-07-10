@@ -14,3 +14,19 @@ def create_access_token(data:dict):
     data_to_encode.update({"exp":expire})
     encoded_jwt =jwt.encode(data_to_encode,SECRET_KEY,algorithm=ALGORITHM)
     return encoded_jwt
+
+def create_refresh_token(data: dict):
+    data_to_encode = data.copy()
+
+    
+    expire = datetime.utcnow() + timedelta(days=7)
+
+    data_to_encode.update({"exp": expire})
+
+    encoded_jwt = jwt.encode(
+        data_to_encode,
+        SECRET_KEY,
+        algorithm=ALGORITHM
+    )
+
+    return encoded_jwt

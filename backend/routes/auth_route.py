@@ -1,64 +1,122 @@
 from database.db import get_db
-from fastapi import APIRouter, HTTPException,Depends
+from fastapi import APIRouter, HTTPException, Depends
+from sqlalchemy.exc import SQLAlchemyError
 from schemas.auth_credentail_schema import UserCredentail
 from google.oauth2 import id_token
 from google.auth.transport import requests
-import os
+from google.auth.exceptions import GoogleAuthError
 from dotenv import load_dotenv
-from models.login_user_model import User 
-from utils.jwt_handler import create_access_token
+from models.login_user_model import User
+from utils.jwt_handler import (
+    create_access_token,
+    create_refresh_token,
+)
+import os
 
 load_dotenv()
 
 auth_router = APIRouter()
-@auth_router.post('/login')
-def handle_auth(payload:UserCredentail,db=Depends(get_db)):
-    user_credentail =id_token.verify_oauth2_token(payload.token, requests.Request(), os.getenv("GOOGLE_CLIENT_ID"))
-    user_info ={
-        "email":user_credentail.get("email"),
-            "name":user_credentail.get("name"),
-            "picture":user_credentail.get("picture")
-    }
-    exesting_user =db.query(User).filter(User.email == user_info["email"]).first()
-    if(exesting_user):
-        print("user  found")
-        access_token =create_access_token(data={"sub":exesting_user.email})
+
+
+@auth_router.post("/login")
+def handle_auth(
+    payload: UserCredentail,
+    db=Depends(get_db),
+):
+    try:
        
-        return {
-            "user":{
-                "user_id":exesting_user.id,
-                "email":exesting_user.email,
-                "name":exesting_user.name,
-                "picture":exesting_user.picture
-            },
-            "access_token_db":access_token
-        }
-        
-    
-    else:
-        print("user not found")
-        new_user = User(
-            google_id=user_credentail.get("sub"),
-            name=user_credentail.get("name"),
-            email=user_credentail.get("email"),
-            picture=user_credentail.get("picture")
+        user_credential = id_token.verify_oauth2_token(
+            payload.token,
+            requests.Request(),
+            os.getenv("GOOGLE_CLIENT_ID"),
         )
+
+        email = user_credential.get("email")
+
+        if not email:
+            raise HTTPException(
+                status_code=400,
+                detail="Email not found in Google account.",
+            )
+
+        existing_user = (
+            db.query(User)
+            .filter(User.email == email)
+            .first()
+        )
+
+       
+        if existing_user:
+
+            access_token = create_access_token(
+                data={"sub": existing_user.email,"type":"access"}
+            )
+
+            refresh_token = create_refresh_token(
+                data={"sub": existing_user.email,"type": "refresh"}
+            )
+
+            return {
+                "user": {
+                    "user_id": existing_user.id,
+                    "email": existing_user.email,
+                    "name": existing_user.name,
+                    "picture": existing_user.picture,
+                },
+                "access_token_db": access_token,
+                "refresh_token_db": refresh_token,
+            }
+
+      
+        new_user = User(
+            google_id=user_credential.get("sub"),
+            name=user_credential.get("name"),
+            email=email,
+            picture=user_credential.get("picture"),
+        )
+
         db.add(new_user)
         db.commit()
         db.refresh(new_user)
-        print("new user created")
-        access_token =create_access_token(data={"sub":new_user.email})
-        present_user =db.query(User).filter(User.email == new_user.email).first()
-        
-        return {
-            "user":{
-                "id":present_user.id,
-                "email":present_user.email,
-                "name":present_user.name,
-                "picture":present_user.picture
-            },
-            "access_token_db":access_token
-        }
-    
 
-    
+        access_token = create_access_token(
+            data={"sub": new_user.email,"type":"access"}
+        )
+
+        refresh_token = create_refresh_token(
+            data={"sub": new_user.email,"type": "refresh"}
+        )
+
+        return {
+            "user": {
+                "user_id": new_user.id,
+                "email": new_user.email,
+                "name": new_user.name,
+                "picture": new_user.picture,
+            },
+            "access_token_db": access_token,
+            "refresh_token_db": refresh_token,
+        }
+
+    except GoogleAuthError:
+        raise HTTPException(
+            status_code=401,
+            detail="Invalid Google authentication token.",
+        )
+
+    except SQLAlchemyError:
+        db.rollback()
+        raise HTTPException(
+            status_code=500,
+            detail="Database error occurred.",
+        )
+
+    except HTTPException:
+        raise
+
+    except Exception as e:
+        print(e)
+        raise HTTPException(
+            status_code=500,
+            detail="Something went wrong. Please try again later.",
+        )

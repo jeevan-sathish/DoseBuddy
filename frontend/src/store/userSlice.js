@@ -1,11 +1,12 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import axios from "axios";
+
+import api from "../utils/api";
 
 export const loginUser = createAsyncThunk(
   "user/login",
   async (credential, { rejectWithValue }) => {
     try {
-      const response = await axios.post("http://localhost:8000/login", {
+      const response = await api.post("/login", {
         token: credential,
       });
 
@@ -22,10 +23,10 @@ export const getProfile = createAsyncThunk(
     try {
       const token = localStorage.getItem("access_token_db");
       console.log(token);
-      const response = await axios.get("http://localhost:8000/login/profile", {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
+      const response = await api.get("/login/profile", {
+        // headers: {
+        //   Authorization: `Bearer ${token}`,
+        // },
       });
 
       return response.data;
@@ -38,6 +39,7 @@ export const getProfile = createAsyncThunk(
 const initialState = {
   userInfo: null,
   access_token_db: null,
+  refresh_token_db: null,
   isAuthenticated: false,
   loading: false,
   error: null,
@@ -62,7 +64,12 @@ const userSlice = createSlice({
         state.loading = false;
         state.userInfo = action.payload.user;
         state.access_token_db = action.payload.access_token_db;
+        state.refresh_token_db = action.payload.refresh_token_db;
         state.isAuthenticated = true;
+        localStorage.setItem(
+          "refresh_token_db",
+          action.payload.refresh_token_db,
+        );
         localStorage.setItem("access_token_db", action.payload.access_token_db);
       })
       .addCase(loginUser.rejected, (state, action) => {
