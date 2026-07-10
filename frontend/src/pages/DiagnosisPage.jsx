@@ -46,7 +46,7 @@ int main() {
       </div>
 
       <div className="w-[45%] h-[94vh] bg-gray-900 flex flex-col justify-center items-center ">
-        output here
+        <h1 className="text-white font-extrabold">output here</h1>
       </div>
     </div>
   );
