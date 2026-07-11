@@ -6,6 +6,7 @@ import { Provider } from "react-redux";
 import { BrowserRouter } from "react-router-dom";
 import { GoogleOAuthProvider } from "@react-oauth/google";
 import { store } from "./store/store.js";
+import "./utils/monacoSetup";
 
 createRoot(document.getElementById("root")).render(
   <StrictMode>

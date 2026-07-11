@@ -23,7 +23,7 @@ const Nav = () => {
 
         <div className="flex items-center gap-5 font-extrabold">
           <Link to="/">Home</Link>
-          <Link to="/DiagnosisPage">Reminders</Link>
+          <Link to="/CodeSandBox">sandbox</Link>
         </div>
       </div>
 

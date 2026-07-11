@@ -7,7 +7,7 @@ import Footer from "./layout/Footer";
 import { useDispatch } from "react-redux";
 
 const Home = lazy(() => import("./pages/Home"));
-const DiagnosisPage = lazy(() => import("./pages/DiagnosisPage"));
+const CodeSandBox = lazy(() => import("./pages/CodeSandBox.jsx"));
 const LogInPage = lazy(() => import("./pages/LogInPage.jsx"));
 
 const App = () => {
@@ -27,10 +27,10 @@ const App = () => {
         <Routes>
           <Route path="/" element={<Home />} />
           <Route
-            path="/DiagnosisPage"
+            path="/CodeSandBox"
             element={
               <ProtectedRoute>
-                <DiagnosisPage />
+                <CodeSandBox />
               </ProtectedRoute>
             }
           />

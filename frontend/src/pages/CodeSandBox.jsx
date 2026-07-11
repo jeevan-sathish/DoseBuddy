@@ -2,26 +2,23 @@ import { MdAdd } from "react-icons/md";
 import { useState } from "react";
 import EditorEnv from "../components/EditorEnv";
 import { RiSubtractLine } from "react-icons/ri";
-const DiagnosisPage = () => {
-  const [value, setvalue] = useState(`#include <iostream>
+import { setCode } from "../store/codeSlice";
+import { useSelector, useDispatch } from "react-redux";
 
-using namespace std;
-
-int main() {
-    cout << "Hello, World!";
-    return 0;
-}`);
+const CodeSandBox = () => {
+  const dispatch = useDispatch();
+  const { code } = useSelector((state) => state.codeSlice);
 
   const [viewSize, setViewSize] = useState(18);
-  function handleChange(value) {
-    setvalue(value);
+  function handleChange(code) {
+    dispatch(setCode(code));
   }
   function handleViewIncrease() {
-    setViewSize((prev) => prev + 1);
+    setViewSize((prev) => Math.min(prev + 2, 40));
   }
 
   function handleViewDecrese() {
-    setViewSize((prev) => prev - 2);
+    setViewSize((prev) => Math.max(prev - 2, 12));
   }
   return (
     <div className="w-full h-screen flex flex-row justify-center gap-3 items-center ">
@@ -40,9 +37,11 @@ int main() {
 
         <EditorEnv
           handleChange={handleChange}
-          value={value}
+          value={code}
           viewSize={viewSize}
+          path="main.js"
         />
+        <div className="text-white font-[40px]">{code}</div>
       </div>
 
       <div className="w-[45%] h-[94vh] bg-gray-900 flex flex-col justify-center items-center ">
@@ -52,4 +51,4 @@ int main() {
   );
 };
 
-export default DiagnosisPage;
+export default CodeSandBox;
